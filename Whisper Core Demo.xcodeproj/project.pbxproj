@@ -23,15 +23,62 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		7A68E1A42E22E31100F435A2 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		7A68E0822E2050D900F435A2 /* Whisper Core Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Whisper Core Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A68E08F2E2050DC00F435A2 /* Whisper Core DemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Whisper Core DemoTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A68E0992E2050DC00F435A2 /* Whisper Core DemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Whisper Core DemoUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		7A68E19D2E22E28100F435A2 /* Exceptions for "Frameworks" folder in "Whisper Core DemoTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				whisper.xcframework,
+			);
+			target = 7A68E08E2E2050DC00F435A2 /* Whisper Core DemoTests */;
+		};
+		7A68E1BC2E22E47700F435A2 /* Exceptions for "Whisper Core Demo" folder in "Whisper Core DemoTests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"Resources/models/ggml-base.en-encoder.mlmodelc",
+				Resources/samples/jfk.wav,
+			);
+			target = 7A68E08E2E2050DC00F435A2 /* Whisper Core DemoTests */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		7A68E1A52E22E31100F435A2 /* Exceptions for "Frameworks" folder in "Embed Frameworks" phase from "Whisper Core Demo" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			attributesByRelativePath = {
+				whisper.xcframework = (CodeSignOnCopy, RemoveHeadersOnCopy, );
+			};
+			buildPhase = 7A68E1A42E22E31100F435A2 /* Embed Frameworks */;
+			membershipExceptions = (
+				whisper.xcframework,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		7A68E0842E2050D900F435A2 /* Whisper Core Demo */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				7A68E1BC2E22E47700F435A2 /* Exceptions for "Whisper Core Demo" folder in "Whisper Core DemoTests" target */,
+			);
 			path = "Whisper Core Demo";
 			sourceTree = "<group>";
 		};
@@ -43,6 +90,15 @@
 		7A68E09C2E2050DC00F435A2 /* Whisper Core DemoUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "Whisper Core DemoUITests";
+			sourceTree = "<group>";
+		};
+		7A68E1992E22E25F00F435A2 /* Frameworks */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				7A68E1A52E22E31100F435A2 /* Exceptions for "Frameworks" folder in "Embed Frameworks" phase from "Whisper Core Demo" target */,
+				7A68E19D2E22E28100F435A2 /* Exceptions for "Frameworks" folder in "Whisper Core DemoTests" target */,
+			);
+			path = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -75,6 +131,7 @@
 		7A68E0792E2050D900F435A2 = {
 			isa = PBXGroup;
 			children = (
+				7A68E1992E22E25F00F435A2 /* Frameworks */,
 				7A68E0842E2050D900F435A2 /* Whisper Core Demo */,
 				7A68E0922E2050DC00F435A2 /* Whisper Core DemoTests */,
 				7A68E09C2E2050DC00F435A2 /* Whisper Core DemoUITests */,
@@ -102,6 +159,7 @@
 				7A68E07E2E2050D900F435A2 /* Sources */,
 				7A68E07F2E2050D900F435A2 /* Frameworks */,
 				7A68E0802E2050D900F435A2 /* Resources */,
+				7A68E1A42E22E31100F435A2 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -109,6 +167,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				7A68E0842E2050D900F435A2 /* Whisper Core Demo */,
+				7A68E1992E22E25F00F435A2 /* Frameworks */,
 			);
 			name = "Whisper Core Demo";
 			packageProductDependencies = (
@@ -405,6 +464,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -433,6 +493,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
