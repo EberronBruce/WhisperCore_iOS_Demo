@@ -1,5 +1,5 @@
 //
-//  LibWhisper.swift
+//  WhisperContext.swift
 //  Whisper Core Demo
 //
 //  Created by Bruce Burgess on 7/12/25.

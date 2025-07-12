@@ -12,7 +12,7 @@ import AVFoundation
 
 final class Dummy {}
 
-struct Whisper_Core_DemoTests {
+struct Whisper_Core_Utils {
 
     @Test
     func testDecodeWaveFile() async throws {

@@ -43,12 +43,12 @@ extension WhisperCoreError: LocalizedError {
 
 @MainActor
 class WhisperState: NSObject, AVAudioRecorderDelegate {
-    private(set) var isModelLoaded = false
+    fileprivate(set) var isModelLoaded = false
     private(set) var messageLog = ""
-    private(set) var canTranscribe = false
+    fileprivate(set) var canTranscribe = false
     private(set) var isRecording = false
     
-    private var whisperContext: WhisperContext?
+    fileprivate var whisperContext: WhisperContextProtocol?
     private let recorder = Recorder()
     private var recordedFile: URL? = nil
     private var audioPlayer: AVAudioPlayer?
@@ -61,7 +61,7 @@ class WhisperState: NSObject, AVAudioRecorderDelegate {
         Bundle.main.url(forResource: "jfk", withExtension: "wav")
     }
     
-    private enum LoadError: Error {
+    enum LoadError: Error, Equatable {
         case couldNotLocateModel
         case pathToModelEmpty
         case unableToLoadModel(String)
@@ -138,7 +138,15 @@ class WhisperState: NSObject, AVAudioRecorderDelegate {
         playBackEnabled = playBack
     }
     
+    /// Optional override for tests
+     var readAudioSamplesOverride: ((URL) throws -> [Float])?
+    
     private func readAudioSamples(_ url: URL) throws -> [Float] {
+        //This override is used for tests
+        if let override = readAudioSamplesOverride {
+            return try override(url)
+        }
+        
         stopPlayback()
         if(playBackEnabled) {
             try startPlayback(url)
@@ -279,3 +287,17 @@ fileprivate func cpuCount() -> Int {
     ProcessInfo.processInfo.processorCount
 }
 
+//Added for unit testing
+class WhisperStateForTest: WhisperState {
+    func injectMockContext(_ context: WhisperContextProtocol) {
+        self.whisperContext = context
+    }
+
+    func setModelLoaded(_ val: Bool) {
+        self.isModelLoaded = val
+    }
+
+    func setCanTranscribe(_ val: Bool) {
+        self.canTranscribe = val
+    }
+}
