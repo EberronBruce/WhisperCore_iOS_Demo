@@ -74,6 +74,9 @@ class WhisperState: NSObject, AVAudioRecorderDelegate {
     
     override init() {
         super.init()
+    }
+    
+    func callRequestRecordPermission() {
         requestRecordPermission { granted in
             self.isMicGranted = granted
         }

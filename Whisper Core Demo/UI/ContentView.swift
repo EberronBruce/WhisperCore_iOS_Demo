@@ -66,6 +66,7 @@ struct ContentView: View {
         .padding()
         .onAppear() {
             whisperState.delegate = bridge
+            whisperState.callRequestRecordPermission()
 //            whisperState.loadModel(at: Bundle.main.path(forResource: "ggml-base.en", ofType: "bin")!) { result in
 //                print("**************************************************************")
 //                switch result {
