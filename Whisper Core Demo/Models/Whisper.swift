@@ -1,9 +1,12 @@
 //
-//  WhisperState.swift
+//  Whisper.swift
 //  Whisper Core Demo
 //
 //  Created by Bruce Burgess on 7/12/25.
 //
+/*
+ This is the main file that handles all the input to the WhisperContext. As the WhisperContext is more like the bridge or glue between the whisper.xcframe work and here. This is what will be used to call all the files. So this allows the user to sample an audio to get translation. Or to allow the user to record the audio to transcribe a recorded audio.
+ */
 
 import Foundation
 import SwiftUI
@@ -14,10 +17,10 @@ protocol AudioRecorderProtocol {
     func stopRecording() async
 }
 
-protocol WhisperStateDelegate: AnyObject {
-    func whisperStateDidTranscribe(_ text: String)
-    func whisperStateDidFailRecording(_ error: Error)
-    func whisperStateFailedToTranscribe(_ error: Error)
+protocol WhisperDelegate: AnyObject {
+    func didTranscribe(_ text: String)
+    func recordingFailed(_ error: Error)
+    func failedToTranscribe(_ error: Error)
 }
 
 
@@ -46,7 +49,7 @@ extension WhisperCoreError: LocalizedError {
 
 
 @MainActor
-class WhisperState: NSObject, AVAudioRecorderDelegate {
+class Whisper: NSObject, AVAudioRecorderDelegate {
     fileprivate(set) var isModelLoaded = false
     private(set) var messageLog = ""
     fileprivate(set) var canTranscribe = false
@@ -59,11 +62,7 @@ class WhisperState: NSObject, AVAudioRecorderDelegate {
     fileprivate var isMicGranted: Bool = false
     
     private var playBackEnabled = false
-    weak var delegate: WhisperStateDelegate?
-    
-    private var sampleUrl: URL? {
-        Bundle.main.url(forResource: "jfk", withExtension: "wav")
-    }
+    weak var delegate: WhisperDelegate?
     
     enum LoadError: Error, Equatable {
         case couldNotLocateModel
@@ -81,30 +80,6 @@ class WhisperState: NSObject, AVAudioRecorderDelegate {
             self.isMicGranted = granted
         }
     }
-    
-    //Old Way, its very slow
-//    func loadModel(at path: String, log: Bool = false) throws {
-//        if path.isEmpty {
-//            messageLog += "No model path specified\n"
-//            throw LoadError.pathToModelEmpty
-//        }
-//        guard FileManager.default.fileExists(atPath: path) else {
-//            messageLog += "Model file not found at \(path)\n"
-//            throw LoadError.couldNotLocateModel
-//        }
-//        do {
-//            whisperContext = nil
-//            if (log) { messageLog += "Loading model...\n" }
-//            whisperContext = try WhisperContext.createContext(path: path)
-//            if (log) { messageLog += "Loaded model \(path)\n" }
-//            canTranscribe = true
-//            isModelLoaded = true
-//        } catch {
-//            print(error.localizedDescription)
-//            if (log) { messageLog += "\(error.localizedDescription)\n" }
-//            throw LoadError.unableToLoadModel(error.localizedDescription)
-//        }
-//    }
     
     func loadModel(at path: String, log: Bool = false, completion: @escaping (Result<Void, Error>) -> Void) {
         if path.isEmpty {
@@ -154,12 +129,12 @@ class WhisperState: NSObject, AVAudioRecorderDelegate {
     
     fileprivate func transcribeAudio(_ url: URL) async {
         guard isModelLoaded else {
-            delegate?.whisperStateFailedToTranscribe(WhisperCoreError.modelNotLoaded)
+            delegate?.failedToTranscribe(WhisperCoreError.modelNotLoaded)
             return
         }
         
         guard let whisperContext else {
-            delegate?.whisperStateFailedToTranscribe(WhisperCoreError.modelNotLoaded)
+            delegate?.failedToTranscribe(WhisperCoreError.modelNotLoaded)
             return
         }
         
@@ -176,12 +151,12 @@ class WhisperState: NSObject, AVAudioRecorderDelegate {
             messageLog += "Transcribing data...\n"
             await whisperContext.fullTranscribe(samples: data)
             let text = await whisperContext.getTranscription()
-            delegate?.whisperStateDidTranscribe(text)
+            delegate?.didTranscribe(text)
             messageLog += "Done: \(text)\n"
         } catch {
             print(error.localizedDescription)
             messageLog += "\(error.localizedDescription)\n"
-            delegate?.whisperStateFailedToTranscribe(error)
+            delegate?.failedToTranscribe(error)
         }
         canTranscribe = true
     }
@@ -228,7 +203,7 @@ class WhisperState: NSObject, AVAudioRecorderDelegate {
                 print(error.localizedDescription)
                 self.messageLog += "\(error.localizedDescription)\n"
                 self.isRecording = false
-                delegate?.whisperStateDidFailRecording(error)
+                delegate?.recordingFailed(error)
             }
         } else {
             requestRecordPermission { granted in
@@ -239,7 +214,7 @@ class WhisperState: NSObject, AVAudioRecorderDelegate {
                         await self.startRecording()
                     }
                 } else {
-                    self.delegate?.whisperStateDidFailRecording(WhisperCoreError.micPermissionDenied)
+                    self.delegate?.recordingFailed(WhisperCoreError.micPermissionDenied)
                 }
             }
         }
@@ -251,7 +226,7 @@ class WhisperState: NSObject, AVAudioRecorderDelegate {
         if let recordedFile {
             await transcribeAudio(recordedFile)
         } else {
-            delegate?.whisperStateDidFailRecording(WhisperCoreError.missingRecordedFile)
+            delegate?.recordingFailed(WhisperCoreError.missingRecordedFile)
         }
     }
     
@@ -289,7 +264,7 @@ class WhisperState: NSObject, AVAudioRecorderDelegate {
         print(error.localizedDescription)
         messageLog += "\(error.localizedDescription)\n"
         isRecording = false
-        delegate?.whisperStateDidFailRecording(error)
+        delegate?.recordingFailed(error)
     }
     
     nonisolated func audioRecorderDidFinishRecording(_ recorder: AVAudioRecorder, successfully flag: Bool) {
@@ -303,12 +278,12 @@ class WhisperState: NSObject, AVAudioRecorderDelegate {
     }
     
 
-    func transcribeSample() async {
+    func transcribeSample(_ sampleUrl: URL?) async {
         if let sampleUrl {
             await transcribeAudio(sampleUrl)
         } else {
             messageLog += "Could not locate sample\n"
-            delegate?.whisperStateFailedToTranscribe(WhisperCoreError.missingRecordedFile)
+            delegate?.failedToTranscribe(WhisperCoreError.missingRecordedFile)
         }
     }
     
@@ -343,7 +318,7 @@ extension Recorder: AudioRecorderProtocol {}
 
 
 //Added for unit testing
-class WhisperStateForTest: WhisperState {
+class WhisperStateForTest: Whisper {
     var permissionRequestHandler: ((@escaping (Bool) -> Void) -> Void)?
     
     override fileprivate func requestRecordPermission(response: @escaping (Bool) -> Void) {

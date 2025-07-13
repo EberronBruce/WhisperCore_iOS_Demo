@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct ContentView: View {
-    @StateObject private var bridge = WhisperStateBridge()
+    @StateObject private var bridge = WhisperBridge()
     
-    private var whisperState = WhisperState()
+    private var whisper = Whisper()
 
     @State var canTranscribe: Bool = false
     @State var isRecording = false
@@ -31,10 +31,10 @@ struct ContentView: View {
                         print("Testing Sample")
                         canTranscribe = false
                         Task {
-                            await whisperState.transcribeSample()
+                            await whisper.transcribeSample(Bundle.main.url(forResource: "jfk", withExtension: "wav"))
                             canTranscribe = true
                         }
-                        print(whisperState.messageLog)
+                        print(whisper.messageLog)
                     }
                     .disabled(!canTranscribe)
                     .padding()
@@ -46,9 +46,9 @@ struct ContentView: View {
                     
                     Button(isRecording ? "Stop Recording Microphone" : "Start Recording Microphone") {
                         Task {
-                            await whisperState.toggleRecord()
-                            isRecording = whisperState.isRecording
-//                            print(whisperState.isRecording)
+                            await whisper.toggleRecord()
+                            isRecording = whisper.isRecording
+//                            print(whisper.isRecording)
                         }
                     }
                     .disabled(!canTranscribe)
@@ -65,16 +65,16 @@ struct ContentView: View {
 
         .padding()
         .onAppear() {
-            whisperState.delegate = bridge
-            whisperState.callRequestRecordPermission()
-//            whisperState.loadModel(at: Bundle.main.path(forResource: "ggml-base.en", ofType: "bin")!) { result in
+            whisper.delegate = bridge
+            whisper.callRequestRecordPermission()
+//            whisper.loadModel(at: Bundle.main.path(forResource: "ggml-base.en", ofType: "bin")!) { result in
 //                print("**************************************************************")
 //                switch result {
 //                case .success:
 //                    print("✅ Model loaded successfully.")
-//                    whisperState.setAudioPlaybackEnable(true)
-//                    self.canTranscribe = whisperState.canTranscribe
-//                    self.isRecording = whisperState.isRecording
+//                    whisper.setAudioPlaybackEnable(true)
+//                    self.canTranscribe = whisper.canTranscribe
+//                    self.isRecording = whisper.isRecording
 //                case .failure(let error):
 //                    print("❌ Failed to load model: \(error)")
 //                }
@@ -82,11 +82,11 @@ struct ContentView: View {
 //            }
             Task {
                 do {
-                    //try whisperState.loadModel(at: Bundle.main.path(forResource: "ggml-base.en", ofType: "bin")!)
-                    try await whisperState.loadModel(at: Bundle.main.path(forResource: "ggml-base.en", ofType: "bin")!)
-                    whisperState.setAudioPlaybackEnable(true)
-                    self.canTranscribe = whisperState.canTranscribe
-                    self.isRecording = whisperState.isRecording
+                    //try whisper.loadModel(at: Bundle.main.path(forResource: "ggml-base.en", ofType: "bin")!)
+                    try await whisper.loadModel(at: Bundle.main.path(forResource: "ggml-base.en", ofType: "bin")!)
+                    whisper.setAudioPlaybackEnable(true)
+                    self.canTranscribe = whisper.canTranscribe
+                    self.isRecording = whisper.isRecording
 
                 } catch {
                     print("Failed to load model: \(error)")
@@ -99,24 +99,22 @@ struct ContentView: View {
 
 }
 
-class WhisperStateBridge: ObservableObject, WhisperStateDelegate {
-    func whisperStateDidFailRecording(_ error: any Error) {
-        print("Failed To Record")
-    }
-    
-    func whisperStateFailedToTranscribe(_ error: any Error) {
-        print("Failed to transcribe")
-    }
-    
+class WhisperBridge: ObservableObject, WhisperDelegate {
     @Published var translatedText: String = ""
-
-    func whisperStateDidTranscribe(_ text: String) {
+    func didTranscribe(_ text: String) {
         DispatchQueue.main.async {
             self.translatedText = text
         }
     }
-
-    // Optional error methods already have default implementations
+    
+    func recordingFailed(_ error: any Error) {
+        print("Failed To Record")
+    }
+    
+    func failedToTranscribe(_ error: any Error) {
+        print("Failed to transcribe")
+    }
+    
 }
 
 
