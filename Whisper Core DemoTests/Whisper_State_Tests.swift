@@ -10,26 +10,40 @@ import Foundation
 import AVFoundation
 @testable import Whisper_Core_Demo
 
+enum TestError: Error {
+    case unexpectedSuccess
+}
+
+
 
 struct Whisper_Core_State {
     
     private func modelPath() -> String? {
-        Bundle.main.path(forResource: "ggml-base.en", ofType: "bin")
+        if let envPath = ProcessInfo.processInfo.environment["WHISPER_MODEL_PATH"], !envPath.isEmpty {
+            return envPath
+        }
+        // Note: Adjust Bundle.main to appropriate bundle if needed
+       return Bundle.main.path(forResource: "ggml-base.en", ofType: "bin")
     }
     
     @MainActor @Test
     func loadModel_closure_validPath_callsSuccess() async throws {
         let whisper = WhisperStateForTest()
         guard let path = modelPath() else {
-            fatalError("Test model file not found in bundle")
+            #expect(Bool(false), "Test model file not found in bundle and WHISPER_MODEL_PATH not set")
+            return
         }
         
-        whisper.loadModel(at: path) { result in
-            switch result {
-            case .success:
-                #expect(true, "Expected success but did not")
-            case .failure(let error):
-                #expect(Bool(false), "Expected success but did not: Error: \(error)")
+     
+        try await withCheckedThrowingContinuation { continuation in
+            whisper.loadModel(at: path) { result in
+                switch result {
+                case .success:
+                    #expect(true, "Expected success but did not")
+                    continuation.resume()  // resumes without error → test continues normally
+                case .failure(let error):
+                    continuation.resume(throwing: error) // throws, so test fails properly
+                }
             }
         }
         
@@ -39,12 +53,18 @@ struct Whisper_Core_State {
     func loadModel_closure_emptyPath_callsFailure() async throws {
         let whisper = WhisperStateForTest()
         
-        whisper.loadModel(at: "") { result in
-            switch result {
-            case .success:
-                #expect(Bool(false), "Expected failure but did not")
-            case .failure(let error):
-                #expect(error as! Whisper.LoadError == Whisper.LoadError.pathToModelEmpty, "Expected LoadError pathToModelEmpty but did not: Error: \(error)")
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            whisper.loadModel(at: "") { result in
+                switch result {
+                case .success:
+                    continuation.resume(throwing: TestError.unexpectedSuccess)
+                case .failure(let error):
+                    if let loadError = error as? Whisper.LoadError, loadError == .pathToModelEmpty {
+                        continuation.resume()
+                    } else {
+                        continuation.resume(throwing: error)
+                    }
+                }
             }
         }
         
@@ -54,12 +74,18 @@ struct Whisper_Core_State {
     func loadModel_closure_invalidPath_callsFailure() async throws {
         let whisper = WhisperStateForTest()
         
-        whisper.loadModel(at: "not-a-valid-path/model.bin") { result in
-            switch result {
-            case .success:
-                #expect(Bool(false), "Expected failure but did not")
-            case .failure(let error):
-                #expect(error as! Whisper.LoadError == Whisper.LoadError.couldNotLocateModel, "Expected LoadError couldNotLocateModel but did not: Error: \(error)")
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
+            whisper.loadModel(at: "not-a-valid-path/model.bin") { result in
+                switch result {
+                case .success:
+                    continuation.resume(throwing: TestError.unexpectedSuccess)
+                case .failure(let error):
+                    if let loadError = error as? Whisper.LoadError, loadError == .couldNotLocateModel {
+                        continuation.resume()
+                    } else {
+                        continuation.resume(throwing: error)
+                    }
+                }
             }
         }
         
@@ -67,14 +93,19 @@ struct Whisper_Core_State {
 
 
     @MainActor @Test
-    func loadModel_withValidPath() async throws {
+    func loadModel_withValidPath() async {
         let whisper = WhisperStateForTest()
         
         guard let path = modelPath() else {
-            fatalError("Test model file not found in bundle")
+            #expect(Bool(false), "Test model file not found in bundle and WHISPER_MODEL_PATH not set")
+            return
+        }
+        do {
+            try await whisper.loadModel(at: path)
+        } catch {
+            #expect(Bool(false), "Unexpected error type: \(error)")
         }
         
-        try await whisper.loadModel(at: path)
         
         // Validate state changes
         #expect(whisper.isModelLoaded == true, "Model is loaded flag is false, hence model did not load")
@@ -82,7 +113,7 @@ struct Whisper_Core_State {
     }
     
     @MainActor @Test
-    func loadModel_withEmptyPath() async throws {
+    func loadModel_withEmptyPath() async {
         let whisper = WhisperStateForTest()
         
         do {
@@ -96,7 +127,7 @@ struct Whisper_Core_State {
     }
     
     @MainActor @Test
-    func loadModel_withInvalidPath() async throws {
+    func loadModel_withInvalidPath() async {
         let whisper = WhisperStateForTest()
         
         do {
@@ -110,7 +141,7 @@ struct Whisper_Core_State {
     }
     
     @MainActor @Test
-    func testTranscribeAudio_success() async throws {
+    func testTranscribeAudio_success() async {
         let state = WhisperStateForTest()
         let mockContext = MockWhisperContext()
         let mockDelegate = MockDelegate()
