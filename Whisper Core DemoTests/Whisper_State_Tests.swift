@@ -20,8 +20,8 @@ struct Whisper_Core_State {
     @MainActor @Test
     func loadModel_closure_validPath_callsSuccess() async throws {
         let whisper = WhisperStateForTest()
-        guard let path = Bundle.main.path(forResource: "ggml-base.en", ofType: "bin") else {
-            throw Whisper.LoadError.pathToModelEmpty
+        guard let path = modelPath() else {
+            fatalError("Test model file not found in bundle")
         }
         
         whisper.loadModel(at: path) { result in
