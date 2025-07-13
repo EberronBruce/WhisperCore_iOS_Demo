@@ -9,21 +9,23 @@ import Foundation
 import SwiftUI
 import AVFoundation
 
+protocol AudioRecorderProtocol {
+    func startRecording(toOutputFile url: URL, delegate: AVAudioRecorderDelegate?) async throws
+    func stopRecording() async
+}
+
 protocol WhisperStateDelegate: AnyObject {
     func whisperStateDidTranscribe(_ text: String)
+    func whisperStateDidFailRecording(_ error: Error)
+    func whisperStateFailedToTranscribe(_ error: Error)
 }
 
-
-extension WhisperStateDelegate {
-    func whisperStateDidFailRecording(_ error: Error) {}
-    func whisperStateFailedToTranscribe(_ error: Error) {}
-    func whisperStateDidFail(_ error: Error) {}
-}
 
 enum WhisperCoreError: Error {
     case missingRecordedFile
     case micPermissionDenied
     case modelNotLoaded
+    case recordingFailed
 }
 
 extension WhisperCoreError: LocalizedError {
@@ -35,6 +37,8 @@ extension WhisperCoreError: LocalizedError {
             return "Microphone access denied."
         case .modelNotLoaded:
             return "Model has not been loaded."
+        case .recordingFailed:
+            return "Recoding has failed"
         }
     }
 }
@@ -49,10 +53,10 @@ class WhisperState: NSObject, AVAudioRecorderDelegate {
     private(set) var isRecording = false
     
     fileprivate var whisperContext: WhisperContextProtocol?
-    private let recorder = Recorder()
-    private var recordedFile: URL? = nil
+    fileprivate var recorder: AudioRecorderProtocol = Recorder()
+    fileprivate var recordedFile: URL? = nil
     private var audioPlayer: AVAudioPlayer?
-    private var isMicGranted: Bool = false
+    fileprivate var isMicGranted: Bool = false
     
     private var playBackEnabled = false
     weak var delegate: WhisperStateDelegate?
@@ -100,14 +104,14 @@ class WhisperState: NSObject, AVAudioRecorderDelegate {
     
     
     
-    private func transcribeAudio(_ url: URL) async {
+    fileprivate func transcribeAudio(_ url: URL) async {
         guard isModelLoaded else {
-            delegate?.whisperStateDidFail(WhisperCoreError.modelNotLoaded)
+            delegate?.whisperStateFailedToTranscribe(WhisperCoreError.modelNotLoaded)
             return
         }
         
         guard let whisperContext else {
-            delegate?.whisperStateDidFail(WhisperCoreError.modelNotLoaded)
+            delegate?.whisperStateFailedToTranscribe(WhisperCoreError.modelNotLoaded)
             return
         }
         
@@ -187,7 +191,7 @@ class WhisperState: NSObject, AVAudioRecorderDelegate {
                         await self.startRecording()
                     }
                 } else {
-                    self.delegate?.whisperStateDidFail(WhisperCoreError.micPermissionDenied)
+                    self.delegate?.whisperStateDidFailRecording(WhisperCoreError.micPermissionDenied)
                 }
             }
         }
@@ -199,11 +203,11 @@ class WhisperState: NSObject, AVAudioRecorderDelegate {
         if let recordedFile {
             await transcribeAudio(recordedFile)
         } else {
-            delegate?.whisperStateDidFail(WhisperCoreError.missingRecordedFile)
+            delegate?.whisperStateDidFailRecording(WhisperCoreError.missingRecordedFile)
         }
     }
     
-    private func requestRecordPermission(response: @escaping (Bool) -> Void) {
+    fileprivate func requestRecordPermission(response: @escaping (Bool) -> Void) {
 #if os(macOS)
         response(true)
 #else
@@ -256,7 +260,7 @@ class WhisperState: NSObject, AVAudioRecorderDelegate {
             await transcribeAudio(sampleUrl)
         } else {
             messageLog += "Could not locate sample\n"
-            delegate?.whisperStateDidFail(WhisperCoreError.missingRecordedFile)
+            delegate?.whisperStateFailedToTranscribe(WhisperCoreError.missingRecordedFile)
         }
     }
     
@@ -287,8 +291,26 @@ fileprivate func cpuCount() -> Int {
     ProcessInfo.processInfo.processorCount
 }
 
+extension Recorder: AudioRecorderProtocol {}
+
+
 //Added for unit testing
 class WhisperStateForTest: WhisperState {
+    var permissionRequestHandler: ((@escaping (Bool) -> Void) -> Void)?
+    
+    override fileprivate func requestRecordPermission(response: @escaping (Bool) -> Void) {
+        if let handler = permissionRequestHandler {
+            handler(response)
+        } else {
+            super.requestRecordPermission(response: response)
+        }
+    }
+    
+    func setRecordedFile(_ url: URL?) {
+        self.recordedFile = url
+    }
+
+    
     func injectMockContext(_ context: WhisperContextProtocol) {
         self.whisperContext = context
     }
@@ -299,5 +321,21 @@ class WhisperStateForTest: WhisperState {
 
     func setCanTranscribe(_ val: Bool) {
         self.canTranscribe = val
+    }
+    
+    func testTranscribeAudio(_ URL: URL) async {
+        await self.transcribeAudio(URL)
+    }
+    
+    func injectMockRecorder(_ mock: AudioRecorderProtocol) {
+        self.recorder = mock
+    }
+
+    func setMicPermission(_ granted: Bool) {
+        self.isMicGranted = granted
+    }
+    
+    func callRequestPermission(response: @escaping (Bool) -> Void) {
+        requestRecordPermission(response: response)
     }
 }

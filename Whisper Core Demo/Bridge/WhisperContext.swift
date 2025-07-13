@@ -72,7 +72,7 @@ actor WhisperContext {
     }
 
     private func systemInfo() -> String {
-        var info = ""
+        let info = "" //change to let to remove warning
         //if (ggml_cpu_has_neon() != 0) { info += "NEON " }
         return String(info.dropLast())
     }

@@ -74,6 +74,14 @@ struct ContentView: View {
 }
 
 class WhisperStateBridge: ObservableObject, WhisperStateDelegate {
+    func whisperStateDidFailRecording(_ error: any Error) {
+        print("Failed To Record")
+    }
+    
+    func whisperStateFailedToTranscribe(_ error: any Error) {
+        print("Failed to transcribe")
+    }
+    
     @Published var translatedText: String = ""
 
     func whisperStateDidTranscribe(_ text: String) {

@@ -64,10 +64,183 @@ struct Whisper_Core_State {
         let mockDelegate = MockDelegate()
         
         state.injectMockContext(mockContext)
-//        state.delegate = mockDelegate
-//        state.isModelLoaded = true
-//        state.canTranscribe = true
+        state.delegate = mockDelegate
+        state.setModelLoaded(true)
+        state.setCanTranscribe(true)
+        
+        // Inject fake audio samples, avoiding playback and I/)
+        state.readAudioSamplesOverride = { _ in
+            return [0.0, 0.1, 0.2, 0.3, 0.4, 0.5]
+        }
+        
+        await state.testTranscribeAudio(URL(fileURLWithPath: "/dummy/path.wav"))
+        
+        #expect(mockDelegate.transcribedText == "Mock transcription")
+        #expect(mockDelegate.failedError == nil)
+        #expect(state.canTranscribe == true)
     }
+    
+    @MainActor @Test
+    func testTranscribeAudio_modelNotLoaded() async {
+        let state = WhisperStateForTest()
+        let mockDelegate = MockDelegate()
+
+        state.delegate = mockDelegate
+        state.setModelLoaded(false) // <- trigger failure
+        state.setCanTranscribe(true)
+
+        await state.testTranscribeAudio(URL(fileURLWithPath: "/dummy/path.wav"))
+        
+        let error = mockDelegate.failedError
+
+        #expect(error as? WhisperCoreError == .modelNotLoaded)
+        #expect(mockDelegate.transcribedText == nil)
+    }
+
+    @MainActor @Test
+    func testTranscribeAudio_missingContext() async {
+        let state = WhisperStateForTest()
+        let mockDelegate = MockDelegate()
+
+        state.delegate = mockDelegate
+        state.setModelLoaded(true)
+        state.setCanTranscribe(true)
+        // ← do NOT inject whisperContext
+
+        await state.testTranscribeAudio(URL(fileURLWithPath: "/dummy/path.wav"))
+
+        #expect(mockDelegate.failedError as? WhisperCoreError == .modelNotLoaded)
+        #expect(mockDelegate.transcribedText == nil)
+    }
+    
+
+    @MainActor @Test
+    func testTranscribeAudio_audioReadFails() async {
+        let state = WhisperStateForTest()
+        let mockContext = MockWhisperContext()
+        let mockDelegate = MockDelegate()
+
+        state.injectMockContext(mockContext)
+        state.delegate = mockDelegate
+        state.setModelLoaded(true)
+        state.setCanTranscribe(true)
+
+        state.readAudioSamplesOverride = { _ in
+            throw DummyError.badAudio
+        }
+
+        await state.testTranscribeAudio(URL(fileURLWithPath: "/dummy/path.wav"))
+
+        #expect(mockDelegate.failedError as? DummyError == .badAudio)
+        #expect(mockDelegate.transcribedText == nil)
+    }
+
+    @MainActor @Test
+    func testTranscribeAudio_alreadyTranscribing() async {
+        let state = WhisperStateForTest()
+        let mockContext = MockWhisperContext()
+        let mockDelegate = MockDelegate()
+
+        state.injectMockContext(mockContext)
+        state.delegate = mockDelegate
+        state.setModelLoaded(true)
+        state.setCanTranscribe(false) // ← will short-circuit
+
+        await state.testTranscribeAudio(URL(fileURLWithPath: "/dummy/path.wav"))
+
+        #expect(mockDelegate.transcribedText == nil)
+        #expect(mockDelegate.failedError == nil)
+    }
+    
+    @Test
+    @MainActor
+    func testStartRecording_permissionGranted_success() async {
+        let mockDelegate = MockDelegate()
+        let state = WhisperStateForTest()
+        let mockRecorder = MockRecorder()
+        state.delegate = mockDelegate
+
+        state.setMicPermission(true)
+        state.injectMockRecorder(mockRecorder)
+
+        await state.startRecording()
+
+        #expect(state.isRecording == true)
+        #expect(mockRecorder.didStartRecording == true)
+        #expect(mockDelegate.failedError == nil)
+    }
+
+    @Test
+    @MainActor
+    func testStartRecording_permissionDenied() async {
+        let mockDelegate = MockDelegate()
+        let state = WhisperStateForTest()
+        state.delegate = mockDelegate
+
+        state.setMicPermission(false)
+
+        // override permission request handler
+
+        state.permissionRequestHandler = { completion in
+            completion(false)
+        }
+
+        await state.startRecording()
+
+        #expect(state.isRecording == false)
+        #expect(mockDelegate.failedError as? WhisperCoreError == .micPermissionDenied)
+    }
+    
+    @MainActor @Test
+    func testStopRecording_withRecordedFile_shouldTranscribe() async {
+        let state = WhisperStateForTest()
+        let mockContext = MockWhisperContext()
+        let mockDelegate = MockDelegate()
+        let mockRecorder = MockRecorder()
+        
+        state.injectMockContext(mockContext)
+        state.injectMockRecorder(mockRecorder)
+        state.delegate = mockDelegate
+        state.setModelLoaded(true)
+        state.setCanTranscribe(true)
+        
+        // Stub a dummy file path
+        let dummyFile = URL(fileURLWithPath: "/dummy/path.wav")
+        state.setRecordedFile(dummyFile)
+
+        // Override sample reader
+        state.readAudioSamplesOverride = { _ in
+            return [0.0, 0.1]
+        }
+
+        await state.stopRecording()
+        
+        #expect(state.isRecording == false)
+        #expect(mockDelegate.transcribedText == "Mock transcription")
+        #expect(mockDelegate.failedError == nil)
+    }
+
+    @MainActor @Test
+    func testStopRecording_withoutRecordedFile_shouldFail() async {
+        let state = WhisperStateForTest()
+        let mockDelegate = MockDelegate()
+        let mockRecorder = MockRecorder()
+
+        state.injectMockRecorder(mockRecorder)
+        state.delegate = mockDelegate
+        state.setModelLoaded(true)
+        state.setCanTranscribe(true)
+
+        // Do NOT set recordedFile (leave as nil)
+        
+        await state.stopRecording()
+
+        #expect(state.isRecording == false)
+        #expect(mockDelegate.failedError as? WhisperCoreError == .missingRecordedFile)
+        #expect(mockDelegate.transcribedText == nil)
+    }
+
+
  
 
 }
@@ -86,17 +259,47 @@ class MockWhisperContext: WhisperContextProtocol {
     }
 }
 
+enum DummyError: Error, Equatable {
+    case badAudio
+}
+
+
 class MockDelegate: WhisperStateDelegate {
     var transcribedText: String? = nil
     var failedError: Error? = nil
 
     func whisperStateDidTranscribe(_ text: String) {
+        print("--------Did Transcribe--------------")
         transcribedText = text
     }
 
     func whisperStateFailedToTranscribe(_ error: Error) {
+        print("--------Failed To Transcribe--------------")
         failedError = error
     }
+    
+    func whisperStateDidFailRecording(_ error: Error) {
+        print("--------Did Fail Recording--------------")
+        failedError = error
+    }
+
 }
+
+class MockRecorder: AudioRecorderProtocol {
+    var shouldSucceed = true
+    var didStartRecording = false
+
+    func startRecording(toOutputFile url: URL, delegate: AVAudioRecorderDelegate?) async throws {
+        if shouldSucceed {
+            didStartRecording = true
+        } else {
+            throw WhisperCoreError.recordingFailed
+        }
+    }
+
+    func stopRecording() {}
+}
+
+
 
 
