@@ -1,3 +1,14 @@
 Whisper Core Demo/Resources/models/ggml-base.en.bin
 *.xcworkspace/xcuserdata/
 Whisper Core Demo/Resources/models/*.bin
+
+# Ignore user-specific Xcode data
+*.xcuserdatad/
+*.xcworkspace/xcuserdata/
+*.xcworkspace/xcshareddata/WorkspaceSettings.xcsettings
+*.xcdebugger/
+
+# Ignore derived data and build artifacts (optional but common)
+DerivedData/
+build/
+
