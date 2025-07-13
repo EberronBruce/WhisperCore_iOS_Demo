@@ -14,58 +14,83 @@ struct ContentView: View {
 
     @State var canTranscribe: Bool = false
     @State var isRecording = false
+    @State private var isLoadingModel = true
     
     var body: some View {
-        VStack(spacing: 40) {
-            Text(bridge.translatedText)
-                .font(.title)
-            Button("Test With Sample") {
-                print("Testing Sample")
-                canTranscribe = false
-                Task {
-                    await whisperState.transcribeSample()
-                    canTranscribe = true
+        VStack {
+            if isLoadingModel {
+                ProgressView("Loading Whisper model...")
+                    .progressViewStyle(CircularProgressViewStyle())
+                    .padding()
+            } else {
+                
+                VStack(spacing: 40) {
+                    Text(bridge.translatedText)
+                        .font(.title)
+                    Button("Test With Sample") {
+                        print("Testing Sample")
+                        canTranscribe = false
+                        Task {
+                            await whisperState.transcribeSample()
+                            canTranscribe = true
+                        }
+                        print(whisperState.messageLog)
+                    }
+                    .disabled(!canTranscribe)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.blue)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                    .padding()
+                    
+                    Button(isRecording ? "Stop Recording Microphone" : "Start Recording Microphone") {
+                        Task {
+                            await whisperState.toggleRecord()
+                            isRecording = whisperState.isRecording
+//                            print(whisperState.isRecording)
+                        }
+                    }
+                    .disabled(!canTranscribe)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .background(Color.red)
+                    .foregroundColor(.white)
+                    .cornerRadius(10)
+                    .padding()
+                    
                 }
-                print(whisperState.messageLog)
             }
-            .disabled(!canTranscribe)
-            .padding()
-            .frame(maxWidth: .infinity)
-            .background(Color.blue)
-            .foregroundColor(.white)
-            .cornerRadius(10)
-            .padding()
-            
-            Button(isRecording ? "Stop Recording Microphone" : "Start Recording Microphone") {
-                Task {
-                    await whisperState.toggleRecord()
-                    isRecording = whisperState.isRecording
-                    print(whisperState.isRecording)
-                }
-            }
-            .disabled(!canTranscribe)
-            .padding()
-            .frame(maxWidth: .infinity)
-            .background(Color.red)
-            .foregroundColor(.white)
-            .cornerRadius(10)
-            .padding()
-
         }
-        
+
         .padding()
         .onAppear() {
             whisperState.delegate = bridge
+//            whisperState.loadModel(at: Bundle.main.path(forResource: "ggml-base.en", ofType: "bin")!) { result in
+//                print("**************************************************************")
+//                switch result {
+//                case .success:
+//                    print("✅ Model loaded successfully.")
+//                    whisperState.setAudioPlaybackEnable(true)
+//                    self.canTranscribe = whisperState.canTranscribe
+//                    self.isRecording = whisperState.isRecording
+//                case .failure(let error):
+//                    print("❌ Failed to load model: \(error)")
+//                }
+//                self.isLoadingModel = false
+//            }
             Task {
                 do {
-                    try whisperState.loadModel(at: Bundle.main.path(forResource: "ggml-base.en", ofType: "bin")!)
+                    //try whisperState.loadModel(at: Bundle.main.path(forResource: "ggml-base.en", ofType: "bin")!)
+                    try await whisperState.loadModel(at: Bundle.main.path(forResource: "ggml-base.en", ofType: "bin")!)
                     whisperState.setAudioPlaybackEnable(true)
                     self.canTranscribe = whisperState.canTranscribe
                     self.isRecording = whisperState.isRecording
+
                 } catch {
                     print("Failed to load model: \(error)")
                 }
-
+                self.isLoadingModel = false
             }
         }
     }

@@ -79,28 +79,73 @@ class WhisperState: NSObject, AVAudioRecorderDelegate {
         }
     }
     
-    func loadModel(at path: String, log: Bool = false) throws {
+    //Old Way, its very slow
+//    func loadModel(at path: String, log: Bool = false) throws {
+//        if path.isEmpty {
+//            messageLog += "No model path specified\n"
+//            throw LoadError.pathToModelEmpty
+//        }
+//        guard FileManager.default.fileExists(atPath: path) else {
+//            messageLog += "Model file not found at \(path)\n"
+//            throw LoadError.couldNotLocateModel
+//        }
+//        do {
+//            whisperContext = nil
+//            if (log) { messageLog += "Loading model...\n" }
+//            whisperContext = try WhisperContext.createContext(path: path)
+//            if (log) { messageLog += "Loaded model \(path)\n" }
+//            canTranscribe = true
+//            isModelLoaded = true
+//        } catch {
+//            print(error.localizedDescription)
+//            if (log) { messageLog += "\(error.localizedDescription)\n" }
+//            throw LoadError.unableToLoadModel(error.localizedDescription)
+//        }
+//    }
+    
+    func loadModel(at path: String, log: Bool = false, completion: @escaping (Result<Void, Error>) -> Void) {
         if path.isEmpty {
             messageLog += "No model path specified\n"
-            throw LoadError.pathToModelEmpty
+            completion(.failure(LoadError.pathToModelEmpty))
+            return
         }
         guard FileManager.default.fileExists(atPath: path) else {
             messageLog += "Model file not found at \(path)\n"
-            throw LoadError.couldNotLocateModel
+            completion(.failure(LoadError.couldNotLocateModel))
+            return
         }
-        do {
-            whisperContext = nil
-            if (log) { messageLog += "Loading model...\n" }
-            whisperContext = try WhisperContext.createContext(path: path)
-            if (log) { messageLog += "Loaded model \(path)\n" }
-            canTranscribe = true
-            isModelLoaded = true
-        } catch {
-            print(error.localizedDescription)
-            if (log) { messageLog += "\(error.localizedDescription)\n" }
-            throw LoadError.unableToLoadModel(error.localizedDescription)
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+                let context = try WhisperContext.createContext(path: path)
+                Task { @MainActor in
+                    self.whisperContext = context
+                    self.canTranscribe = true
+                    self.isModelLoaded = true
+                    if log { self.messageLog += "Loaded model \(path)\n" }
+                    completion(.success(()))
+                }
+            } catch {
+                Task { @MainActor in
+                    if log { self.messageLog += "\(error.localizedDescription)\n" }
+                    completion(.failure(LoadError.unableToLoadModel(error.localizedDescription)))
+                }
+            }
         }
     }
+
+    func loadModel(at path: String, log: Bool = false) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            loadModel(at: path, log: log) { result in
+                switch result {
+                case .success:
+                    continuation.resume()
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                }
+            }
+        }
+    }
+
     
     
     

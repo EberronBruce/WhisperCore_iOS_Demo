@@ -4,6 +4,13 @@
 //
 //  Created by Bruce Burgess on 7/12/25.
 //
+/*
+ This file comes from the whisper.cpp under the whisper.swiftui.demo.
+ https://github.com/ggml-org/whisper.cpp
+ https://github.com/ggml-org/whisper.cpp/tree/master/examples/whisper.swiftui
+ The file is kept pretty much the same execpt for one change to remove the warning from Xcode. It was renamed as a file to WhisperContext instead of LibWhisper as that is what the class name is and it makes more sense to keep it that way.
+ This class is the bridge between the whisper.xcframework(which was created following the instructions on the github repo posted above) and the rest of the app. It is the glue between the c++ whisper code and the iOS swift code. 
+ */
 
 import Foundation
 import UIKit

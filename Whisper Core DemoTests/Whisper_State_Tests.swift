@@ -16,16 +16,65 @@ struct Whisper_Core_State {
     private func modelPath() -> String? {
         Bundle.main.path(forResource: "ggml-base.en", ofType: "bin")
     }
+    
+    @MainActor @Test
+    func loadModel_closure_validPath_callsSuccess() async throws {
+        let whisper = WhisperStateForTest()
+        guard let path = Bundle.main.path(forResource: "ggml-base.en", ofType: "bin") else {
+            throw WhisperState.LoadError.pathToModelEmpty
+        }
+        
+        whisper.loadModel(at: path) { result in
+            switch result {
+            case .success:
+                #expect(true, "Expected success but did not")
+            case .failure(let error):
+                #expect(Bool(false), "Expected success but did not: Error: \(error)")
+            }
+        }
+        
+    }
+    
+    @MainActor @Test
+    func loadModel_closure_emptyPath_callsFailure() async throws {
+        let whisper = WhisperStateForTest()
+        
+        whisper.loadModel(at: "") { result in
+            switch result {
+            case .success:
+                #expect(Bool(false), "Expected failure but did not")
+            case .failure(let error):
+                #expect(error as! WhisperState.LoadError == WhisperState.LoadError.pathToModelEmpty, "Expected LoadError pathToModelEmpty but did not: Error: \(error)")
+            }
+        }
+        
+    }
+    
+    @MainActor @Test
+    func loadModel_closure_invalidPath_callsFailure() async throws {
+        let whisper = WhisperStateForTest()
+        
+        whisper.loadModel(at: "not-a-valid-path/model.bin") { result in
+            switch result {
+            case .success:
+                #expect(Bool(false), "Expected failure but did not")
+            case .failure(let error):
+                #expect(error as! WhisperState.LoadError == WhisperState.LoadError.couldNotLocateModel, "Expected LoadError couldNotLocateModel but did not: Error: \(error)")
+            }
+        }
+        
+    }
+
 
     @MainActor @Test
-    func loadModel_withValidPath() throws {
-        let whisper = WhisperState()
+    func loadModel_withValidPath() async throws {
+        let whisper = WhisperStateForTest()
         
         guard let path = modelPath() else {
             fatalError("Test model file not found in bundle")
         }
         
-        try whisper.loadModel(at: path)
+        try await whisper.loadModel(at: path)
         
         // Validate state changes
         #expect(whisper.isModelLoaded == true, "Model is loaded flag is false, hence model did not load")
@@ -33,27 +82,30 @@ struct Whisper_Core_State {
     }
     
     @MainActor @Test
-    func loadModel_withEmptyPath() throws {
-        let whisper = WhisperState()
+    func loadModel_withEmptyPath() async throws {
+        let whisper = WhisperStateForTest()
         
         do {
-            try whisper.loadModel(at: "")
-            fatalError("Expected to throw but did not")
-            
+            try await whisper.loadModel(at: "")
+            #expect(Bool(false), "Expected to throw but did not")
         } catch let error as WhisperState.LoadError {
-            #expect(error == .pathToModelEmpty)
+            #expect(error == .pathToModelEmpty, "Expected .pathToModelEmpty, got \(error)")
+        } catch {
+            #expect(Bool(false), "Unexpected error type: \(error)")
         }
     }
     
     @MainActor @Test
-    func loadModel_withInvalidPath() throws {
+    func loadModel_withInvalidPath() async throws {
         let whisper = WhisperState()
         
         do {
-            try whisper.loadModel(at: "not-a-valid-path/model.bin")
-            fatalError("Expected to throw but did not")
+            try await whisper.loadModel(at: "not-a-valid-path/model.bin")
+            #expect(Bool(false), "Expected to throw but did not")
         } catch let error as WhisperState.LoadError {
-            #expect(error == .couldNotLocateModel)
+            #expect(error == .couldNotLocateModel, "Expected .couldNotLocateModel, got \(error)")
+        } catch {
+            #expect(Bool(false), "Unexpected error type: \(error)")
         }
     }
     
@@ -269,17 +321,14 @@ class MockDelegate: WhisperStateDelegate {
     var failedError: Error? = nil
 
     func whisperStateDidTranscribe(_ text: String) {
-        print("--------Did Transcribe--------------")
         transcribedText = text
     }
 
     func whisperStateFailedToTranscribe(_ error: Error) {
-        print("--------Failed To Transcribe--------------")
         failedError = error
     }
     
     func whisperStateDidFailRecording(_ error: Error) {
-        print("--------Did Fail Recording--------------")
         failedError = error
     }
 
