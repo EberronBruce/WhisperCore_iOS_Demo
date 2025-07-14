@@ -59,7 +59,7 @@ struct Whisper_Core_State {
                 case .success:
                     continuation.resume(throwing: TestError.unexpectedSuccess)
                 case .failure(let error):
-                    if let loadError = error as? Whisper.LoadError, loadError == .pathToModelEmpty {
+                    if let loadError = error as? WhisperState.LoadError, loadError == .pathToModelEmpty {
                         continuation.resume()
                     } else {
                         continuation.resume(throwing: error)
@@ -80,7 +80,7 @@ struct Whisper_Core_State {
                 case .success:
                     continuation.resume(throwing: TestError.unexpectedSuccess)
                 case .failure(let error):
-                    if let loadError = error as? Whisper.LoadError, loadError == .couldNotLocateModel {
+                    if let loadError = error as? WhisperState.LoadError, loadError == .couldNotLocateModel {
                         continuation.resume()
                     } else {
                         continuation.resume(throwing: error)
@@ -119,7 +119,7 @@ struct Whisper_Core_State {
         do {
             try await whisper.loadModel(at: "")
             #expect(Bool(false), "Expected to throw but did not")
-        } catch let error as Whisper.LoadError {
+        } catch let error as WhisperState.LoadError {
             #expect(error == .pathToModelEmpty, "Expected .pathToModelEmpty, got \(error)")
         } catch {
             #expect(Bool(false), "Unexpected error type: \(error)")
@@ -133,7 +133,7 @@ struct Whisper_Core_State {
         do {
             try await whisper.loadModel(at: "not-a-valid-path/model.bin")
             #expect(Bool(false), "Expected to throw but did not")
-        } catch let error as Whisper.LoadError {
+        } catch let error as WhisperState.LoadError {
             #expect(error == .couldNotLocateModel, "Expected .couldNotLocateModel, got \(error)")
         } catch {
             #expect(Bool(false), "Unexpected error type: \(error)")

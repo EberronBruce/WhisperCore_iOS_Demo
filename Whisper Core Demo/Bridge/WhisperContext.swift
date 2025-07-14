@@ -16,12 +16,12 @@ import Foundation
 import UIKit
 import whisper
 
-enum WhisperError: Error {
+internal enum WhisperError: Error {
     case couldNotInitializeContext
 }
 
 // Meet Whisper C++ constraint: Don't access from more than one thread at a time.
-actor WhisperContext {
+internal actor WhisperContext {
     private var context: OpaquePointer
 
     init(context: OpaquePointer) {

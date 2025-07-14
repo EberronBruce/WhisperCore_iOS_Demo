@@ -9,7 +9,7 @@
 import Foundation
 import AVFoundation
 
-actor Recorder {
+internal actor Recorder {
     private var recorder: AVAudioRecorder?
     
     enum RecorderError: Error {

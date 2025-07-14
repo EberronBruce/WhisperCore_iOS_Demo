@@ -10,7 +10,7 @@
 
 import Foundation
 
-protocol WhisperContextProtocol {
+internal protocol WhisperContextProtocol {
     func fullTranscribe(samples: [Float]) async
     func getTranscription() async -> String
     func benchFull(modelName: String, nThreads: Int32) async -> String

@@ -10,7 +10,7 @@ import SwiftUI
 struct ContentView: View {
     @StateObject private var bridge = WhisperBridge()
     
-    private var whisper = Whisper()
+    private var whisper = WhisperState()
 
     @State var canTranscribe: Bool = false
     @State var isRecording = false

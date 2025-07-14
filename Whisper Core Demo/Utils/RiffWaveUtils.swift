@@ -8,7 +8,7 @@
 
 import Foundation
 
-func decodeWaveFile(_ url: URL) throws -> [Float] {
+internal func decodeWaveFile(_ url: URL) throws -> [Float] {
     let data = try Data(contentsOf: url)
     let floats = stride(from: 44, to: data.count, by: 2).map {
         return data[$0..<$0 + 2].withUnsafeBytes {
