@@ -40,16 +40,10 @@
 		7A68E0822E2050D900F435A2 /* Whisper Core Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Whisper Core Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A68E08F2E2050DC00F435A2 /* Whisper Core DemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Whisper Core DemoTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7A68E0992E2050DC00F435A2 /* Whisper Core DemoUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Whisper Core DemoUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7A8015B02E24B4CA003E3F46 /* WhisperCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WhisperCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		7A68E19D2E22E28100F435A2 /* Exceptions for "Frameworks" folder in "Whisper Core DemoTests" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				whisper.xcframework,
-			);
-			target = 7A68E08E2E2050DC00F435A2 /* Whisper Core DemoTests */;
-		};
 		7A68E1BC2E22E47700F435A2 /* Exceptions for "Whisper Core Demo" folder in "Whisper Core DemoTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -60,19 +54,6 @@
 			target = 7A68E08E2E2050DC00F435A2 /* Whisper Core DemoTests */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		7A68E1A52E22E31100F435A2 /* Exceptions for "Frameworks" folder in "Embed Frameworks" phase from "Whisper Core Demo" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			attributesByRelativePath = {
-				whisper.xcframework = (CodeSignOnCopy, RemoveHeadersOnCopy, );
-			};
-			buildPhase = 7A68E1A42E22E31100F435A2 /* Embed Frameworks */;
-			membershipExceptions = (
-				whisper.xcframework,
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		7A68E0842E2050D900F435A2 /* Whisper Core Demo */ = {
@@ -93,13 +74,9 @@
 			path = "Whisper Core DemoUITests";
 			sourceTree = "<group>";
 		};
-		7A68E1992E22E25F00F435A2 /* Frameworks */ = {
+		7A8015B12E24B4CA003E3F46 /* WhisperCore */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				7A68E1A52E22E31100F435A2 /* Exceptions for "Frameworks" folder in "Embed Frameworks" phase from "Whisper Core Demo" target */,
-				7A68E19D2E22E28100F435A2 /* Exceptions for "Frameworks" folder in "Whisper Core DemoTests" target */,
-			);
-			path = Frameworks;
+			path = WhisperCore;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -126,13 +103,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7A8015AD2E24B4CA003E3F46 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		7A68E0792E2050D900F435A2 = {
 			isa = PBXGroup;
 			children = (
-				7A68E1992E22E25F00F435A2 /* Frameworks */,
+				7A8015B12E24B4CA003E3F46 /* WhisperCore */,
 				7A68E0842E2050D900F435A2 /* Whisper Core Demo */,
 				7A68E0922E2050DC00F435A2 /* Whisper Core DemoTests */,
 				7A68E09C2E2050DC00F435A2 /* Whisper Core DemoUITests */,
@@ -146,11 +130,22 @@
 				7A68E0822E2050D900F435A2 /* Whisper Core Demo.app */,
 				7A68E08F2E2050DC00F435A2 /* Whisper Core DemoTests.xctest */,
 				7A68E0992E2050DC00F435A2 /* Whisper Core DemoUITests.xctest */,
+				7A8015B02E24B4CA003E3F46 /* WhisperCore.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		7A8015AB2E24B4CA003E3F46 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		7A68E0812E2050D900F435A2 /* Whisper Core Demo */ = {
@@ -168,7 +163,6 @@
 			);
 			fileSystemSynchronizedGroups = (
 				7A68E0842E2050D900F435A2 /* Whisper Core Demo */,
-				7A68E1992E22E25F00F435A2 /* Frameworks */,
 			);
 			name = "Whisper Core Demo";
 			packageProductDependencies = (
@@ -223,6 +217,29 @@
 			productReference = 7A68E0992E2050DC00F435A2 /* Whisper Core DemoUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		7A8015AF2E24B4CA003E3F46 /* WhisperCore */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7A8015B82E24B4CA003E3F46 /* Build configuration list for PBXNativeTarget "WhisperCore" */;
+			buildPhases = (
+				7A8015AB2E24B4CA003E3F46 /* Headers */,
+				7A8015AC2E24B4CA003E3F46 /* Sources */,
+				7A8015AD2E24B4CA003E3F46 /* Frameworks */,
+				7A8015AE2E24B4CA003E3F46 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				7A8015B12E24B4CA003E3F46 /* WhisperCore */,
+			);
+			name = WhisperCore;
+			packageProductDependencies = (
+			);
+			productName = WhisperCore;
+			productReference = 7A8015B02E24B4CA003E3F46 /* WhisperCore.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -244,6 +261,9 @@
 						CreatedOnToolsVersion = 16.4;
 						TestTargetID = 7A68E0812E2050D900F435A2;
 					};
+					7A8015AF2E24B4CA003E3F46 = {
+						CreatedOnToolsVersion = 16.4;
+					};
 				};
 			};
 			buildConfigurationList = 7A68E07D2E2050D900F435A2 /* Build configuration list for PBXProject "Whisper Core Demo" */;
@@ -263,6 +283,7 @@
 				7A68E0812E2050D900F435A2 /* Whisper Core Demo */,
 				7A68E08E2E2050DC00F435A2 /* Whisper Core DemoTests */,
 				7A68E0982E2050DC00F435A2 /* Whisper Core DemoUITests */,
+				7A8015AF2E24B4CA003E3F46 /* WhisperCore */,
 			);
 		};
 /* End PBXProject section */
@@ -289,6 +310,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		7A8015AE2E24B4CA003E3F46 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -307,6 +335,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		7A68E0952E2050DC00F435A2 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7A8015AC2E24B4CA003E3F46 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -582,6 +617,76 @@
 			};
 			name = Release;
 		};
+		7A8015B62E24B4CA003E3F46 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = V3GFNATBC5;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.redravencomputing.WhisperCore;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		7A8015B72E24B4CA003E3F46 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = V3GFNATBC5;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = com.redravencomputing.WhisperCore;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -617,6 +722,15 @@
 			buildConfigurations = (
 				7A68E0AA2E2050DC00F435A2 /* Debug */,
 				7A68E0AB2E2050DC00F435A2 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7A8015B82E24B4CA003E3F46 /* Build configuration list for PBXNativeTarget "WhisperCore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7A8015B62E24B4CA003E3F46 /* Debug */,
+				7A8015B72E24B4CA003E3F46 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
