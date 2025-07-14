@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		7A88E8E92E24D53800273FE2 /* WhisperCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7A8015B02E24B4CA003E3F46 /* WhisperCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		7A68E0902E2050DC00F435A2 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -25,6 +29,17 @@
 
 /* Begin PBXCopyFilesBuildPhase section */
 		7A68E1A42E22E31100F435A2 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				7A88E8E92E24D53800273FE2 /* WhisperCore.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		7A8015CF2E24C864003E3F46 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
@@ -55,6 +70,19 @@
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		7A8015D02E24C864003E3F46 /* Exceptions for "WhisperCore" folder in "Embed Frameworks" phase from "WhisperCore" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			attributesByRelativePath = {
+				Frameworks/whisper.xcframework = (CodeSignOnCopy, RemoveHeadersOnCopy, );
+			};
+			buildPhase = 7A8015CF2E24C864003E3F46 /* Embed Frameworks */;
+			membershipExceptions = (
+				Frameworks/whisper.xcframework,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		7A68E0842E2050D900F435A2 /* Whisper Core Demo */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
@@ -76,6 +104,9 @@
 		};
 		7A8015B12E24B4CA003E3F46 /* WhisperCore */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				7A8015D02E24C864003E3F46 /* Exceptions for "WhisperCore" folder in "Embed Frameworks" phase from "WhisperCore" target */,
+			);
 			path = WhisperCore;
 			sourceTree = "<group>";
 		};
@@ -225,6 +256,7 @@
 				7A8015AC2E24B4CA003E3F46 /* Sources */,
 				7A8015AD2E24B4CA003E3F46 /* Frameworks */,
 				7A8015AE2E24B4CA003E3F46 /* Resources */,
+				7A8015CF2E24C864003E3F46 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -631,6 +663,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -642,6 +675,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.redravencomputing.WhisperCore;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_MODULE = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;
@@ -666,6 +703,7 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -677,6 +715,10 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.redravencomputing.WhisperCore;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_INSTALL_MODULE = YES;
 				SWIFT_INSTALL_OBJC_HEADER = NO;

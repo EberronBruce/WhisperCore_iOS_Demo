@@ -37,8 +37,8 @@ public final class Whisper {
     ///
     /// - Parameter modelPath: The file system path to the Whisper model.
     /// - Throws: An error if loading the model fails.
-    public func initializeModel(at modelPath: String) async throws {
-        try await whisper.loadModel(at: modelPath)
+    public func initializeModel(at modelPath: String, log: Bool = false) async throws {
+        try await whisper.loadModel(at: modelPath, log: log)
     }
     
     /// Loads the Whisper model with a completion handler.
@@ -99,4 +99,28 @@ public final class Whisper {
     public func reset() {
         whisper.reset()
     }
+    
+    public func canTranscribe() -> Bool {
+        whisper.canTranscribe
+    }
+    
+    public func isRecording() -> Bool {
+        whisper.isRecording
+    }
+    
+    public func isModelLoaded() -> Bool {
+        whisper.isModelLoaded
+    }
+    
+    public func getMessageLogs() -> String {
+        whisper.messageLog
+    }
+        
+    #if DEBUG
+    public func benchmark() async {
+        await whisper.benchCurrentModel()
+        print(whisper.messageLog)
+    }
+    #endif
+    
 }
