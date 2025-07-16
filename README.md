@@ -14,7 +14,7 @@ It includes:
 
 ## 🔗 Related Repositories
 
-- [WhisperCore (Swift Package)](https://github.com/EberronBruce/WhisperCore) – Reusable Swift library built from this demo project
+- [WhisperCore (Swift Package)](https://github.com/EberronBruce/WhisperCore.git) – Reusable Swift library built from this demo project
 
 ---
 
