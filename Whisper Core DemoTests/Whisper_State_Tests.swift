@@ -8,7 +8,7 @@
 import Testing
 import Foundation
 import AVFoundation
-@testable import Whisper_Core_Demo
+@testable import WhisperCore
 
 enum TestError: Error {
     case unexpectedSuccess

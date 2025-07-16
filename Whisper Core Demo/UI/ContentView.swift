@@ -6,11 +6,12 @@
 //
 
 import SwiftUI
+import WhisperCore
 
 struct ContentView: View {
     @StateObject private var bridge = WhisperBridge()
     
-    private var whisper = WhisperState()
+    private var whisper = Whisper()
 
     @State var canTranscribe: Bool = false
     @State var isRecording = false
@@ -31,10 +32,10 @@ struct ContentView: View {
                         print("Testing Sample")
                         canTranscribe = false
                         Task {
-                            await whisper.transcribeSample(Bundle.main.url(forResource: "jfk", withExtension: "wav"))
+                            await whisper.transcribeSample(from: Bundle.main.url(forResource: "jfk", withExtension: "wav")!)
                             canTranscribe = true
                         }
-                        print(whisper.messageLog)
+                        //print(whisper.messageLog)
                     }
                     .disabled(!canTranscribe)
                     .padding()
@@ -46,8 +47,8 @@ struct ContentView: View {
                     
                     Button(isRecording ? "Stop Recording Microphone" : "Start Recording Microphone") {
                         Task {
-                            await whisper.toggleRecord()
-                            isRecording = whisper.isRecording
+                            await whisper.toggleRecording()
+                            isRecording = whisper.isRecording()
 //                            print(whisper.isRecording)
                         }
                     }
@@ -83,10 +84,11 @@ struct ContentView: View {
             Task {
                 do {
                     //try whisper.loadModel(at: Bundle.main.path(forResource: "ggml-base.en", ofType: "bin")!)
-                    try await whisper.loadModel(at: Bundle.main.path(forResource: "ggml-base.en", ofType: "bin")!)
-                    whisper.setAudioPlaybackEnable(true)
-                    self.canTranscribe = whisper.canTranscribe
-                    self.isRecording = whisper.isRecording
+//                    try await whisper.loadModel(at: Bundle.main.path(forResource: "ggml-base.en", ofType: "bin")!)
+                    try await whisper.initializeModel(at: Bundle.main.path(forResource: "ggml-base.en", ofType: "bin")!)
+                    whisper.enablePlayback(true)
+                    self.canTranscribe = whisper.canTranscribe()
+                    self.isRecording = whisper.isRecording()
 
                 } catch {
                     print("Failed to load model: \(error)")
