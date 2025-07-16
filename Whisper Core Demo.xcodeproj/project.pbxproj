@@ -49,6 +49,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		7A5F73932E28519400D8E27B /* Exceptions for "Frameworks" folder in "Whisper Core Demo" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				whisper.xcframework,
+			);
+			target = 7A68E0812E2050D900F435A2 /* Whisper Core Demo */;
+		};
 		7A68E1BC2E22E47700F435A2 /* Exceptions for "Whisper Core Demo" folder in "Whisper Core DemoTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -60,9 +67,26 @@
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
+/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+		7A5F73942E28519400D8E27B /* Exceptions for "Frameworks" folder in "Embed Frameworks" phase from "Whisper Core Demo" target */ = {
+			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
+			attributesByRelativePath = {
+				whisper.xcframework = (CodeSignOnCopy, RemoveHeadersOnCopy, );
+			};
+			buildPhase = 7A68E1A42E22E31100F435A2 /* Embed Frameworks */;
+			membershipExceptions = (
+				whisper.xcframework,
+			);
+		};
+/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		7A1ADEC52E28078B007A3F91 /* Frameworks */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				7A5F73932E28519400D8E27B /* Exceptions for "Frameworks" folder in "Whisper Core Demo" target */,
+				7A5F73942E28519400D8E27B /* Exceptions for "Frameworks" folder in "Embed Frameworks" phase from "Whisper Core Demo" target */,
+			);
 			path = Frameworks;
 			sourceTree = "<group>";
 		};
