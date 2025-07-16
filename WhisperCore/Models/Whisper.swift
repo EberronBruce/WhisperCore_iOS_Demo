@@ -100,23 +100,55 @@ public final class Whisper {
         whisper.reset()
     }
     
+    /// Indicates whether Whisper is ready to perform transcription.
+    ///
+    /// Returns `true` if the model is loaded and audio input is enabled,
+    /// otherwise `false`. This is useful for enabling or disabling UI elements.
+    ///
+    /// - Returns: A Boolean indicating transcription readiness.
     public func canTranscribe() -> Bool {
         whisper.canTranscribe
     }
     
+    /// Indicates whether audio recording is currently active.
+    ///
+    /// Returns `true` if Whisper is recording from the microphone, `false` otherwise.
+    /// This can be used to update UI elements (e.g., recording indicators or buttons).
+    ///
+    /// - Returns: A Boolean indicating the recording state.
     public func isRecording() -> Bool {
         whisper.isRecording
     }
     
+    /// Checks whether a Whisper model has been successfully loaded.
+    ///
+    /// Returns `true` if a model is loaded and ready for transcription,
+    /// otherwise `false`. This is useful to validate app state before starting recording or transcription.
+    ///
+    /// - Returns: A Boolean indicating if a model is currently loaded.
     public func isModelLoaded() -> Bool {
         whisper.isModelLoaded
     }
     
+    /// Returns a string containing the internal log messages from Whisper.
+    ///
+    /// This includes debug output, status messages, and benchmark results
+    /// (if available). You can expose this in developer builds or log it
+    /// to external tools for troubleshooting.
+    ///
+    /// - Returns: A string of accumulated internal messages and logs.
     public func getMessageLogs() -> String {
         whisper.messageLog
     }
         
     #if DEBUG
+    /// Runs a benchmark test on the currently loaded model (DEBUG only).
+    ///
+    /// Measures the time it takes to process a dummy audio file using the
+    /// loaded model and prints the results to the console. Use this to gauge
+    /// performance across different devices or model sizes.
+    ///
+    /// - Note: This function is only available in DEBUG builds.
     public func benchmark() async {
         await whisper.benchCurrentModel()
         print(whisper.messageLog)

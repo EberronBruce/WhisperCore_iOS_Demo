@@ -39,16 +39,6 @@
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		7A8015CF2E24C864003E3F46 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -70,20 +60,12 @@
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		7A8015D02E24C864003E3F46 /* Exceptions for "WhisperCore" folder in "Embed Frameworks" phase from "WhisperCore" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			attributesByRelativePath = {
-				Frameworks/whisper.xcframework = (CodeSignOnCopy, RemoveHeadersOnCopy, );
-			};
-			buildPhase = 7A8015CF2E24C864003E3F46 /* Embed Frameworks */;
-			membershipExceptions = (
-				Frameworks/whisper.xcframework,
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		7A1ADEC52E28078B007A3F91 /* Frameworks */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Frameworks;
+			sourceTree = "<group>";
+		};
 		7A68E0842E2050D900F435A2 /* Whisper Core Demo */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
@@ -104,9 +86,6 @@
 		};
 		7A8015B12E24B4CA003E3F46 /* WhisperCore */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				7A8015D02E24C864003E3F46 /* Exceptions for "WhisperCore" folder in "Embed Frameworks" phase from "WhisperCore" target */,
-			);
 			path = WhisperCore;
 			sourceTree = "<group>";
 		};
@@ -152,6 +131,7 @@
 				7A68E0922E2050DC00F435A2 /* Whisper Core DemoTests */,
 				7A68E09C2E2050DC00F435A2 /* Whisper Core DemoUITests */,
 				7A68E0832E2050D900F435A2 /* Products */,
+				7A1ADEC52E28078B007A3F91 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -256,13 +236,13 @@
 				7A8015AC2E24B4CA003E3F46 /* Sources */,
 				7A8015AD2E24B4CA003E3F46 /* Frameworks */,
 				7A8015AE2E24B4CA003E3F46 /* Resources */,
-				7A8015CF2E24C864003E3F46 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				7A1ADEC52E28078B007A3F91 /* Frameworks */,
 				7A8015B12E24B4CA003E3F46 /* WhisperCore */,
 			);
 			name = WhisperCore;

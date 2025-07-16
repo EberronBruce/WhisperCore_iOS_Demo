@@ -48,6 +48,11 @@ It is ideal for voice interfaces, command processing, dictation, or AI-driven mo
 
 - ``Whisper/enablePlayback(_:)`` – Enables or disables audio playback
 - ``Whisper/reset()`` – Resets the internal state, clears models and sessions
+- ``Whisper/canTranscribe()`` – Indicates if transcription is currently possible
+- ``Whisper/isRecording()`` – Returns whether audio recording is active
+- ``Whisper/isModelLoaded()`` – Returns whether a model is loaded
+- ``Whisper/getMessageLogs()`` –  Returns internal logs from WhisperCore
+- ``Whisper/benchmark()`` –  Runs model benchmark (DEBUG builds only)
 
 ### Delegate Callbacks
 
