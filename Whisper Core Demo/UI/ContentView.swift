@@ -102,6 +102,14 @@ struct ContentView: View {
 }
 
 class WhisperBridge: ObservableObject, WhisperDelegate {
+    func startRecording() {
+        print("Recording Started")
+    }
+    
+    func stopRecording() {
+        print("Recording Stopped")
+    }
+    
     @Published var translatedText: String = ""
     func didTranscribe(_ text: String) {
         DispatchQueue.main.async {
