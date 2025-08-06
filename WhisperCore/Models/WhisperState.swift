@@ -21,8 +21,8 @@ public protocol WhisperDelegate: AnyObject {
     func didTranscribe(_ text: String)
     func recordingFailed(_ error: Error)
     func failedToTranscribe(_ error: Error)
-    func startRecording()
-    func stopRecording()
+    func didStartRecording()
+    func didStopRecording()
 }
 
 
@@ -199,7 +199,7 @@ internal class WhisperState: NSObject, AVAudioRecorderDelegate {
                 self.isRecording = true
                 let file = try FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
                     .appending(path: "output.wav")
-                delegate?.startRecording()
+                delegate?.didStartRecording()
                 try await self.recorder.startRecording(toOutputFile: file, delegate: self)
                 self.recordedFile = file
             } catch {
@@ -225,7 +225,7 @@ internal class WhisperState: NSObject, AVAudioRecorderDelegate {
     
     func stopRecording() async  {
         await recorder.stopRecording()
-        delegate?.stopRecording()
+        delegate?.didStopRecording()
         isRecording = false
         if let recordedFile {
             await transcribeAudio(recordedFile)

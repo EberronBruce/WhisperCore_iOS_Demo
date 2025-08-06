@@ -7,7 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7A88E8E92E24D53800273FE2 /* WhisperCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7A8015B02E24B4CA003E3F46 /* WhisperCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		7AF4C2B92E42F33100D07DEC /* WhisperCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A8015B02E24B4CA003E3F46 /* WhisperCore.framework */; };
+		7AF4C2BA2E42F33100D07DEC /* WhisperCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 7A8015B02E24B4CA003E3F46 /* WhisperCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -25,6 +26,13 @@
 			remoteGlobalIDString = 7A68E0812E2050D900F435A2;
 			remoteInfo = "Whisper Core Demo";
 		};
+		7AF4C2BB2E42F33100D07DEC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 7A68E07A2E2050D900F435A2 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A8015AF2E24B4CA003E3F46;
+			remoteInfo = WhisperCore;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -34,7 +42,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				7A88E8E92E24D53800273FE2 /* WhisperCore.framework in Embed Frameworks */,
+				7AF4C2BA2E42F33100D07DEC /* WhisperCore.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -120,6 +128,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7AF4C2B92E42F33100D07DEC /* WhisperCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -195,6 +204,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				7AF4C2BC2E42F33100D07DEC /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				7A68E0842E2050D900F435A2 /* Whisper Core Demo */,
@@ -397,6 +407,11 @@
 			target = 7A68E0812E2050D900F435A2 /* Whisper Core Demo */;
 			targetProxy = 7A68E09A2E2050DC00F435A2 /* PBXContainerItemProxy */;
 		};
+		7AF4C2BC2E42F33100D07DEC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7A8015AF2E24B4CA003E3F46 /* WhisperCore */;
+			targetProxy = 7AF4C2BB2E42F33100D07DEC /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -542,7 +557,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.redravencomputing.Whisper-Core-Demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -572,7 +587,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.0.1;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.redravencomputing.Whisper-Core-Demo";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

@@ -102,11 +102,11 @@ struct ContentView: View {
 }
 
 class WhisperBridge: ObservableObject, WhisperDelegate {
-    func startRecording() {
+    func didStartRecording() {
         print("Recording Started")
     }
     
-    func stopRecording() {
+    func didStopRecording() {
         print("Recording Stopped")
     }
     
